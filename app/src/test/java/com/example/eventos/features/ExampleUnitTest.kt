@@ -1,4 +1,4 @@
-package com.example.eventos
+package com.example.eventos.features
 
 import org.junit.Test
 
