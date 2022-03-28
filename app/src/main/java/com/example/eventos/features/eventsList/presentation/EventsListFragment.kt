@@ -3,23 +3,30 @@ package com.example.eventos.features.eventsList.presentation
 import android.widget.Toast
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.eventos.features.eventsList.domain.model.Event
-import com.example.eventos.features.eventsList.presentation.di.EventsListPresentationFactory
-import com.example.eventos.common.base.BaseFragment
 import com.example.eventos.R
+import com.example.eventos.common.base.BaseFragment
 import com.example.eventos.databinding.FragmentEventsListBinding
+import com.example.eventos.features.eventsList.domain.model.Event
+import com.example.eventos.features.eventsList.presentation.EventsListViewModel.ViewAction.CloseKeyboard
+import com.example.eventos.features.eventsList.presentation.EventsListViewModel.ViewAction.HideLoading
+import com.example.eventos.features.eventsList.presentation.EventsListViewModel.ViewAction.ShowLoading
+import com.example.eventos.features.eventsList.presentation.EventsListViewModel.ViewAction.ShowSnackBarError
+import com.example.eventos.features.eventsList.presentation.EventsListViewModel.ViewState.LoadEventsFail
+import com.example.eventos.features.eventsList.presentation.EventsListViewModel.ViewState.LoadEventsSuccess
 import com.google.android.material.snackbar.Snackbar
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class EventsListFragment : BaseFragment<FragmentEventsListBinding>() {
+class EventsListFragment(
+) : BaseFragment<FragmentEventsListBinding>() {
 
-    private val viewModelEvents: EventsListViewModel =
-        EventsListPresentationFactory.provideListEventsViewModel() // TODO usar o ViewModelProviders depois
     private lateinit var eventsAdapter: EventAdapter
+
+    val EventsListViewModel: EventsListViewModel by viewModel()
 
     override fun getLayout() = R.layout.fragment_events_list
 
     override fun initBinding() {
-        binding.viewModel = viewModelEvents
+        binding.viewModel = EventsListViewModel
 
         eventsAdapter = EventAdapter { event: Event ->
             navigationForDetails(event)
@@ -32,31 +39,33 @@ class EventsListFragment : BaseFragment<FragmentEventsListBinding>() {
         }
     }
 
+
     private fun navigationForDetails(model: Event) {
 //        val action = ListMovieFragmentDirections.actionListFilmToDetailsFilm(model.id)
 //        view?.findNavController()?.navigate(action)
     }
 
     override fun observers() {
-        viewModelEvents.action.observe(viewLifecycleOwner) {
+        EventsListViewModel.action.observe(viewLifecycleOwner) {
             when (it) {
-                EventsListViewModel.ViewAction.CloseKeyboard -> showToast("Fechar teclado")
-                EventsListViewModel.ViewAction.HideLoading -> showToast("Remover loading")
-                EventsListViewModel.ViewAction.ShowLoading -> showToast("Mostrar loading")
-                EventsListViewModel.ViewAction.ShowSnackBarError -> showSnackBar("Ops... Houve um erro!")
+                CloseKeyboard -> showToast("Fechar teclado")
+                HideLoading -> showToast("Remover loading")
+                ShowLoading -> showToast("Mostrar loading")
+                ShowSnackBarError -> showSnackBar("Ops... Houve um erro!")
             }
         }
 
-        viewModelEvents.state.observe(viewLifecycleOwner) {
+        EventsListViewModel.state.observe(viewLifecycleOwner) {
             when (it) {
-                is EventsListViewModel.ViewState.LoadEventsSuccess -> eventsAdapter.clearAndAdd(it.events)
-                EventsListViewModel.ViewState.LoadEventsFail -> { }
+                is LoadEventsSuccess -> eventsAdapter.clearAndAdd(it.events)
+                LoadEventsFail -> {
+                }
             }
         }
     }
 
     private fun showToast(text: String) {
-        Toast.makeText(requireContext(),text,Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
     }
 
     private fun showSnackBar(text: String) {

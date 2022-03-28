@@ -22,8 +22,15 @@ android {
 
     buildTypes {
         release {
+            buildConfigField "String", "API_URL", "\"http://5f5a8f24d44d640016169133.mockapi.io/api/\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled false
+            buildConfigField "String", "API_URL", "\"http://5f5a8f24d44d640016169133.mockapi.io/api/\""
+            debuggable true
         }
     }
 
@@ -60,7 +67,6 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-
     // Arch
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
@@ -71,4 +77,15 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     implementation 'com.google.code.gson:gson:2.8.8'
+
+    // Koin main features for Android
+    def koin_version= "3.1.5"
+    implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
+    implementation "io.insert-koin:koin-androidx-navigation:$koin_version"
+
+
+    //Moshi (JSON mapping)
+    implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
 }

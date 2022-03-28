@@ -5,7 +5,9 @@ import com.example.eventos.features.eventsList.domain.model.EventsListState
 import com.example.eventos.features.eventsList.domain.repository.EventsListRepository
 import io.reactivex.Single
 
-class EventsListUseCaseImpl(private val repository: EventsListRepository) : EventsListUseCase {
+class EventsListUseCaseImpl(
+    private val repository: EventsListRepository
+    ) : EventsListUseCase {
 
     override fun loadEvents(): Single<EventsListState> =
         repository.requestEvents().map { mapEventToState(it) }
@@ -15,4 +17,5 @@ class EventsListUseCaseImpl(private val repository: EventsListRepository) : Even
             list.isNullOrEmpty() -> EventsListState.FailLoadEvents
             else -> EventsListState.SuccessLoadEvents(list)
         }
+//        Single.just(EventsListState.FailLoadEvents)
 }
